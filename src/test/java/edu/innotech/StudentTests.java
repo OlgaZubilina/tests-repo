@@ -21,13 +21,6 @@ public class StudentTests {
         Assertions.assertEquals(student.getName(), "Vova");
     }
 
-    @RepeatedTest(value = 4, name = "Adding correct grades to list")
-    public void marksInRange(RepetitionInfo repetitionInfo) {
-        Student student = new Student("Vasya");
-        int num = repetitionInfo.getCurrentRepetition() + 1;
-        student.addGrade(num);
-        Assertions.assertEquals(student.getGrades().get(0), num);
-    }
 
     @ParameterizedTest(name = "Adding uncorrect grades throws exeption")
     @MethodSource("edu.innotech.MarksGenerator#ints")
@@ -82,16 +75,17 @@ public class StudentTests {
         Assertions.assertEquals(10,student.raiting());
 
     }
-
-    @Test
-    public void checkAddCorrectGrades(){
+    @RepeatedTest(value = 4, name = "Adding correct grades to list")
+       public void checkAddCorrectGrades(RepetitionInfo repetitionInfo){
         Student student = new Student("Vasya");
         StudentRepo repo = new StudentRepositoryMock();
         student.setRepo(repo);
-        student.addGrade(5);
-        Assertions.assertEquals(5,student.getGrades().get(0));
+        int num = repetitionInfo.getCurrentRepetition() + 1;
+        student.addGrade(num);
+        Assertions.assertEquals(num,student.getGrades().get(0));
 
     }
+
     @Test
     public void checkAddUncorrectGrades(){
         Student student = new Student("Vasya");
@@ -99,7 +93,6 @@ public class StudentTests {
         Mockito.when(repo.checkGrades(Mockito.anyInt())).thenReturn(true);
         student.setRepo(repo);
         Assertions.assertThrows(IllegalArgumentException.class, () -> student.addGrade(5));
-
     }
 
 }
