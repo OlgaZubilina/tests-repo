@@ -1,8 +1,15 @@
 package edu.innotech;
-import java.util.*;
-import java.util.stream.Collectors;
+
+import lombok.SneakyThrows;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 
 public class Student {
+
+    StudentRepo repo;
     private String name;
     private List grades = new ArrayList<>();
 
@@ -18,15 +25,29 @@ public class Student {
         return name;
     }
 
+    public void setRepo(StudentRepo repo) {
+        this.repo = repo;
+    }
+
     public List getGrades() {
         return Collections.unmodifiableList(grades);
     }
 
-    public void addGrade (int grade) {
-        if (grade < 2 || grade > 5) {
-            throw new IllegalArgumentException(grade + " is wrong grade");
-        }
-        grades.add(grade);
+
+    @SneakyThrows
+    public void addGrade(int grade) {
+        if (!repo.checkGrades(grade))
+            grades.add(grade);
+        else throw new IllegalArgumentException("not valid grade");
+    }
+
+    @SneakyThrows
+    public int raiting() {
+        return repo.getRaintingForGradeSum(
+                grades.stream()
+                        .mapToInt(x -> (int) x)
+                        .sum()
+        );
     }
 
     @Override
@@ -59,5 +80,7 @@ public class Student {
     public String toString() {
         return "Student{" + "name=" + name + ", marks=" + grades + '}';
     }
+
+
 }
 

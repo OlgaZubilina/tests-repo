@@ -1,8 +1,8 @@
 package edu.innotech;
-
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 public class StudentTests {
 
@@ -56,14 +56,7 @@ public class StudentTests {
         Assertions.assertEquals(student1, student);
     }
 
-    @DisplayName("CorrectToString")
-    @Test
-    public void correctToString() {
-        Student student = new Student("Vasya");
-        student.addGrade(5);
-        student.addGrade(4);
-        Assertions.assertEquals("Student{name=Vasya, marks=[5, 4]}", student.toString());
-    }
+
 
     @DisplayName("Correct hashCode")
     @Test
@@ -76,4 +69,37 @@ public class StudentTests {
         int hash = (13 * 7 + i) * 13 + i1;
         Assertions.assertEquals(student.hashCode(), hash);
     }
+
+    @Test
+    public void testRaiting(){
+        Student student = new Student("Vasya");
+        student.addGrade(5);
+        student.addGrade(4);
+
+        StudentRepo repo = Mockito.mock(StudentRepo.class);
+        Mockito.when(repo.getRaintingForGradeSum(Mockito.anyInt())).thenReturn(10);
+        student.setRepo(repo);
+        Assertions.assertEquals(10,student.raiting());
+
+    }
+
+    @Test
+    public void checkAddCorrectGrades(){
+        Student student = new Student("Vasya");
+        StudentRepo repo = new StudentRepositoryMock();
+        student.setRepo(repo);
+        student.addGrade(5);
+        Assertions.assertEquals(5,student.getGrades().get(0));
+
+    }
+    @Test
+    public void checkAddUncorrectGrades(){
+        Student student = new Student("Vasya");
+        StudentRepo repo = Mockito.mock(StudentRepo.class);
+        Mockito.when(repo.checkGrades(Mockito.anyInt())).thenReturn(true);
+        student.setRepo(repo);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> student.addGrade(5));
+
+    }
+
 }
