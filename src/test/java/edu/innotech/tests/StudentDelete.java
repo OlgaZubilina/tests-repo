@@ -7,6 +7,8 @@ import edu.innotech.sources.StudentData;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static edu.innotech.helpers.RestHelper.studentGet;
+
 public class StudentDelete {
     @ParameterizedTest(name = "Can delete student")
     @MethodSource("edu.innotech.sources.Students#studsList")
@@ -14,6 +16,7 @@ public class StudentDelete {
         ObjectMapper mapper = new ObjectMapper();
         RestHelper.studentPost(mapper, studentData, 201);
         RestHelper.studentDelete(studentData, 200);
+        RestHelper.cannotGetStudent(studentData,404);
     }
 
     @ParameterizedTest(name = "Can't delete student: student not found")

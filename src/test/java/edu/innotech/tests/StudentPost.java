@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
+
 import static edu.innotech.helpers.RestHelper.studentGet;
 
 public class StudentPost {
@@ -27,7 +29,6 @@ public class StudentPost {
         String str = RestHelper.studentPostWithoutId(mapper, studentData, 201);
         System.out.println(str);
         int responce = Integer.parseInt(str);
-
         studentData.setId(responce);
         StudentData studentResponce = studentGet(mapper, studentData, 200);
         Assertions.assertEquals(studentData, studentResponce);
@@ -35,12 +36,13 @@ public class StudentPost {
     }
 
     @ParameterizedTest(name = "Can update student")
-    @MethodSource("edu.innotech.sources.Students#studsList")
+    @MethodSource("edu.innotech.sources.Students#fullStudents")
     public void updateStudent(StudentData studentData) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         RestHelper.studentPost(mapper, studentData, 201);
         System.out.println("Существующий студент:" + studentGet(mapper, studentData, 200));
         studentData.setName("NewName");
+        studentData.setMarks(List.of(4,3,5,2));
         RestHelper.studentPost(mapper, studentData, 201);
         StudentData studentResponce = studentGet(mapper, studentData, 200);
         System.out.println("Измененный студент:" + studentResponce);
